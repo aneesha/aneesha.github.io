@@ -1,1 +1,130 @@
-Hello World
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>SciRise Prototype</title>
+
+    <!-- Bootstrap -->
+    <link href="www/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="www/bootstrap/js/bootstrap.min.js"></script>
+    <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    #myInput {
+      background-image: url('/css/searchicon.png');
+      background-position: 10px 10px;
+      background-repeat: no-repeat;
+      width: 100%;
+      font-size: 16px;
+      padding: 12px 20px 12px 40px;
+      border: 1px solid #ddd;
+      margin-bottom: 12px;
+    }
+
+    #myTable {
+      border-collapse: collapse;
+      width: 100%;
+      border: 1px solid #ddd;
+      font-size: 18px;
+    }
+
+    #myTable th, #myTable td {
+      text-align: left;
+      padding: 12px;
+    }
+
+    #myTable tr {
+      border-bottom: 1px solid #ddd;
+    }
+
+    #myTable tr.header, #myTable tr:hover {
+      background-color: #f1f1f1;
+    }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">SciRise</a>
+        </div>
+      </div>
+    </nav>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-12">
+
+          <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names.." title="Type in a name">
+
+          <table id="myTable">
+            <tr class="header">
+              <th style="width:60%;">Purpose</th>
+              <th style="width:30%;">Library</th>
+              <th style="width:10%;"></th>
+            </tr>
+            <tr>
+              <td>Classification</td>
+              <td>SciKit Learn</td>
+              <td><a href="classification.html" class="btn btn-info" role="button">Select</a></td>
+            </tr>
+            <tr>
+              <td>Clustering</td>
+              <td>SciKit Learn</td>
+              <td><a href="#" class="btn btn-info" role="button">Select</a></td>
+            </tr>
+            <tr>
+              <td>Regression</td>
+              <td>SciKit Learn</td>
+              <td><a href="#" class="btn btn-info" role="button">Select</a></td>
+            </tr>
+            <tr>
+              <td>Find Topics in Text</td>
+              <td>SciKit Learn</td>
+              <td><a href="topics.html" class="btn btn-info" role="button">Select</a></td>
+            </tr>
+            <tr>
+              <td>Sentiment Analysis</td>
+              <td>SciKit Learn</td>
+              <td><a href="#" class="btn btn-info" role="button">Select</a></td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <p></p>
+    </div>
+    <script>
+    function myFunction() {
+      var input, filter, table, tr, td, i;
+      input = document.getElementById("myInput");
+      filter = input.value.toUpperCase();
+      table = document.getElementById("myTable");
+      tr = table.getElementsByTagName("tr");
+      for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td")[0];
+        if (td) {
+          if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+            tr[i].style.display = "";
+          } else {
+            tr[i].style.display = "none";
+          }
+        }
+      }
+    }
+    </script>
+  </body>
+</html>
