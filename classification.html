@@ -26,7 +26,7 @@
       {id:1, order:1, componenttype:'loaddata', config:{type:'scikitlearn_dataset', value:"iris"}},
       {id:2, order:2, componenttype:'traintestsplit', config:{splitpercentage:'0.7'}},
       {id:3, order:3, componenttype:'scaledata', config:{type:'MinMaxScaler'}},
-      {id:4, order:4, componenttype:'classificationalgorithm', config:{type:'SVM'}},
+      {id:4, order:4, componenttype:'classificationalgorithm', config:{type:'SVC'}},
       {id:5, order:5, componenttype:'parametergrid',
                       config:{param_grid_json: {'kernel': ['rbf'],'C': [0.001, 0.01, 0.1, 1, 10, 100],'gamma': [0.001, 0.01, 0.1, 1, 10, 100]}}},
       {id:6, order:6, componenttype:'gridsearchcv', config:{cvfolds:5}},
@@ -50,7 +50,7 @@
                   step_title:'Load Data',
                   required_python_imports: 'from sklearn.datasets import load_{{scikitlearn_dataset__selectbox}}',
                   python_code_template: 'dataset = load_{{scikitlearn_dataset__selectbox}}()',
-                  code_comment: '# code comment',
+                  code_comment: '# Load Data',
                   types: [{type:'scikitlearn_dataset', values:"iris,boston"},{type:'csvfile', values:""}],
                   html_template: '<label for="scikitlearn_dataset__selectbox">Use a SciKit Learn Dataset:</label> {{scikitlearn_dataset__selectbox}} <br >OR<br/><label for="csvfile__inputbox">Specify a CSV File:</label> {{csvfile__inputbox}}',
                   step_reason: '',
@@ -60,7 +60,7 @@
                   step_title:'Split Data into Train and Test Sets',
                   required_python_imports: 'from sklearn.model_selection import train_test_split',
                   python_code_template: 'X_train, X_test, y_train, y_test = train_test_split(dataset.data, dataset.target, train_size={{splitpercentage__inputbox}}, random_state=0)',
-                  code_comment: '# code comment',
+                  code_comment: '# Split Data into Train and Test Sets',
                   html_template: '<label for="splitpercentage__inputbox">Percentage of Data Used for Testing:</label> {{splitpercentage__inputbox}}',
                   step_reason: 'It is important to split the dataset in a training and test set. The model will be built on the training dataset and when run on the test set, you\'ll get an indication of how well the model generalises to new data.',
                   html_controls: ['splitpercentage__inputbox']
@@ -68,8 +68,8 @@
       gridsearchcv: {
                   step_title:'Perform Cross-Validated Parameter Search',
                   required_python_imports: 'from sklearn.model_selection import GridSearchCV',
-                  python_code_template: 'grid_search = GridSearchCV({{algorithm__selectbox}}(), param_grid, cv={{cvfolds__inputbox}})',
-                  code_comment: '# code comment',
+                  python_code_template: 'grid_search = GridSearchCV({{algorithm__selectbox}}(), param_grid, cv={{cvfolds__inputbox}})\ngrid_search.fit(X_train, y_train)',
+                  code_comment: '# Perform Cross-Validated Parameter Search',
                   html_template: '<label for="cvfolds__inputbox">Number of CV Folds:</label> {{cvfolds__inputbox}}',
                   step_reason: 'The goal of cross validation is to define a dataset to "test" the model in the training phase to limit overfitting the model to the training dataset',
                   html_controls: ['cvfolds__inputbox', 'algorithm__selectbox']
@@ -77,8 +77,8 @@
       scaledata: {
                   step_title:'Scale Data',
                   required_python_imports: 'from sklearn.preprocessing import {{scaleoption__radiobutton}}',
-                  python_code_template: '',
-                  code_comment: '# code comment',
+                  python_code_template: 'std_scale = {{scaleoption__radiobutton}}().fit(X_train)\nX_train = std_scale.transform(X_train)\nX_test = std_scale.transform(X_test)',
+                  code_comment: '# Scale Data',
                   types: [{type:'scaletype', values:"MinMaxScaler,StandardScaler"}],
                   html_template: '<label for="scaleoption">Choose a scaling option:</label> {{scaleoption__radiobutton}}',
                   step_reason: 'Feature Scaling is a way to perform data normalization. Feature Scaling can improve the convergence and performance of a model.',
@@ -89,7 +89,7 @@
                   required_python_imports: 'from sklearn.svm import {{algorithm__selectbox}}',
                   python_code_template: '',
                   code_comment: '',
-                  types: [{type:'algorithm', values:"SVM"}],
+                  types: [{type:'algorithm', values:"SVC"}],
                   html_template: '<label for="algorithm">Choose an algorithm:</label> {{algorithm__selectbox}}',
                   step_reason: '',
                   html_controls: ['algorithm__selectbox']
@@ -98,7 +98,7 @@
                   step_title:'Specify Algorithm Parameters to Try',
                   required_python_imports: '',
                   python_code_template: 'param_grid = [{{algorithm__parametergrid}}]',
-                  code_comment: '# code comment',
+                  code_comment: '# Specify Algorithm Parameters to Try',
                   html_template: '<label for="algorithm__parametergrid">Enter Model Parameters:</label> {{algorithm__parametergrid}}',
                   step_reason: 'It is important try a range of parameters and review algorithm performance.',
                   html_controls: ['algorithm__parametergrid']
@@ -106,8 +106,8 @@
       resultsdisplay: {
                   step_title:'Perform Cross Validation to Find Best Parameters',
                   required_python_imports: 'import pandas as pd',
-                  python_code_template: 'print("Test set score: {:.2f}".format(grid_search.score(X_test, y_test)))\nprint("Best parameters: {}".format(grid_search.best_params_))\nprint("Best cross-validation score: {:.2f}".format(grid_search.best_score_))\nprint("Best estimator:\n{}".format(grid_search.best_estimator_))',
-                  code_comment: '# code comment',
+                  python_code_template: 'print("Test set score: {:.2f}".format(grid_search.score(X_test, y_test)))\nprint("Best parameters: {}".format(grid_search.best_params_))\nprint("Best cross-validation score: {:.2f}".format(grid_search.best_score_))\nprint("Best estimator: {}".format(grid_search.best_estimator_))',
+                  code_comment: '# Perform Cross Validation to Find Best Parameters',
                   types: {metricstodisplay:['testsetscore', 'bestparams', 'cvscore', 'bestestimator', 'displaysummaryresults'], metricslabels:['Test set score', 'Best parameters', 'Best cross-validation score', 'Best estimator', 'CV Result Summary']},
                   html_template: '<label for="displaymetrics">Select Evaluation Metrics:</label>{{displaymetrics__checkbutton}}',
                   step_reason: 'It is important to review model performance on both the training and test datasets.',
@@ -123,9 +123,14 @@
         var componenttype = classification_template_json[key].componenttype;
         var python_code_template = component_definitions_json[componenttype].python_code_template;
         var code_comment = component_definitions_json[componenttype].code_comment;
+        var step_reason = component_definitions_json[componenttype].step_reason;
         //console.log(python_code_template);
         var html_controls = component_definitions_json[componenttype].html_controls;
-        var required_python_code = "\n\n" + code_comment + "\n";
+        var required_python_code = "\n" + code_comment + "\n";
+        if (step_reason != "")
+        {
+          required_python_code += "# " + step_reason + "\n";
+        }
         if (python_code_template!=""){
           for (cntr in html_controls){
             //console.log(html_controls[cntr]);
@@ -155,9 +160,9 @@
                   var cntr_placeholder = "{{" + html_controls[cntr] + "}}";
                   python_code_template = python_code_template.replace(cntr_placeholder, val);
               }
-              required_python_code += python_code_template;
+              //required_python_code += python_code_template;
           }
-          python_code += "\n" + required_python_code;
+          python_code += required_python_code + "\n" + python_code_template;
         }
       }
       return python_code;
@@ -284,13 +289,37 @@
       return  html;
     }
 
+    function isInt(n){
+        return Number(n) === n && n % 1 === 0;
+    }
+
+    function isFloat(n){
+        return Number(n) === n && n % 1 !== 0;
+    }
+
     function get_grid_json(id, option_json)
     {
       //{'kernel': ['rbf'],'C': [0.001, 0.01, 0.1, 1, 10, 100],'gamma': [0.001, 0.01, 0.1, 1, 10, 100]}
+
       var grid_obj = {};
       for (key in option_json){
         var value = $('#'+id+"_"+key).val();
-        grid_obj[key] = value.split(',');
+        var str_array = value.split(',')
+        var res = []
+        for (var y = 0; y < str_array.length; y++) {
+          var temp = str_array[y].split(",");
+          for (var i = 0; i < temp.length; i++) {
+            if (key == 'kernel')
+            {
+              res.push(temp[i]);
+            }
+            else{
+              res.push(parseFloat(temp[i]));
+            }
+          }
+        }
+        console.log(res);
+        grid_obj[key] = res;
       }
 
       return  JSON.stringify(grid_obj);
