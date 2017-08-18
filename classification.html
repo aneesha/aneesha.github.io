@@ -104,13 +104,13 @@
                   html_controls: ['algorithm__parametergrid']
                 },
       resultsdisplay: {
-                  step_title:'Perform Cross Validation to Find Best Parameters',
+                  step_title:'Display Model Evaluation Metrics',
                   required_python_imports: 'import pandas as pd',
                   python_code_template: 'print("Test set score: {:.2f}".format(grid_search.score(X_test, y_test)))\nprint("Best parameters: {}".format(grid_search.best_params_))\nprint("Best cross-validation score: {:.2f}".format(grid_search.best_score_))\nprint("Best estimator: {}".format(grid_search.best_estimator_))',
                   code_comment: '# Perform Cross Validation to Find Best Parameters',
                   types: {metricstodisplay:['testsetscore', 'bestparams', 'cvscore', 'bestestimator', 'displaysummaryresults'], metricslabels:['Test set score', 'Best parameters', 'Best cross-validation score', 'Best estimator', 'CV Result Summary']},
                   html_template: '<label for="displaymetrics">Select Evaluation Metrics:</label>{{displaymetrics__checkbutton}}',
-                  step_reason: 'It is important to review model performance on both the training and test datasets.',
+                  step_reason: 'It is important to evaluate model performance with a range of metrics on both the training and test datasets.',
                   html_controls: ['displaymetrics__checkbutton']
                 }
     };
@@ -162,7 +162,7 @@
               }
               //required_python_code += python_code_template;
           }
-          python_code += required_python_code + "\n" + python_code_template;
+          python_code += "\n" + required_python_code + python_code_template;
         }
       }
       return python_code;
