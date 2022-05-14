@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+    <head>
+      <!--<link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css" />-->
+      <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+      <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
+      <py-env>
+        - scikit-learn
+        - numpy
+      </py-env>
+    </head>
+
+  <body>
+    <header>
+      <h1>PyScript Experiments</h1>
+      <p>Fun with PyScript....</p>
+    </header>
+
+    <h1>Topic Modeling with PyScript</h1>
+
+      <p>
+        <label>Enter each text statement on a new line</label><br>
+        <textarea id="text_collection" rows="20">Human machine interface for Lab ABC computer applications
+A survey of user opinion of computer system response time
+The EPS user interface management system
+System and human system engineering testing of EPS
+Relation of user-perceived response time to error measurement
+The generation of random, binary, unordered trees
+The intersection graph of paths in trees
+Graph minors IV: Widths of trees and quasi-ordering
+Graph minors: A survey
+        </textarea>
+      </p>
+      <p>
+        <label>Number of Topics</label><br>
+        <input type="number" id="no_topics" value="2">
+      </p>
+
+      <button id="find_topics" pys-onClick="find_topics">Find Topics</button>
+
+    <pre id="topics"></pre>
+
+<py-script>
+
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.decomposition import NMF
+import numpy as np
+
+text_collection_element = Element("text_collection")
+topics_element = Element("topics")
+no_topics_element = Element("no_topics")
+
+def display_topics(H, W, feature_names, documents, no_top_words, no_top_documents):
+  output = ""
+  for topic_idx, topic in enumerate(H):
+    output += "Topic %d:" % (topic_idx) + " "
+    output += " ".join([feature_names[i] for i in topic.argsort()[:-no_top_words - 1:-1]])
+    output += "\n"
+    top_doc_indices = np.argsort( W[:,topic_idx] )[::-1][0:no_top_documents]
+    for doc_index in top_doc_indices:
+      output += documents[doc_index]  + "\n"
+    output += "\n \n"
+  return output
+
+def find_topics(*args, **kwargs):
+
+  no_topics = int(no_topics_element.value)
+
+  documents = text_collection_element.value.split("\n")
+  documents = [x.strip() for x in documents if x.strip()]
+  
+  tfidf_vectorizer = TfidfVectorizer(stop_words='english')
+  tfidf = tfidf_vectorizer.fit_transform(documents)
+  tfidf_feature_names = tfidf_vectorizer.get_feature_names_out()
+
+  nmf = NMF(n_components=no_topics,init='nndsvd').fit(tfidf)
+
+  nmf_W = nmf.transform(tfidf)
+  nmf_H = nmf.components_
+
+  no_top_words = 4
+  no_top_documents = 2
+  output = display_topics(nmf_H, nmf_W, tfidf_feature_names, documents, no_top_words, no_top_documents)
+
+  topics_element.write(output)
+
+</py-script>
+<p>
+  <a href="index.html">Back to list of Pyscript Experiments</a>
+</p>
+  </body>
+</html>
