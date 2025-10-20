@@ -1,4 +1,6 @@
-# OS generated files #
-######################
+# macOS system files
 .DS_Store
-.DS_Store?
+.AppleDouble
+.Spotlight-V100
+.Trashes
+._*
